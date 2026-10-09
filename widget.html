@@ -1,0 +1,18 @@
+<!doctype html><html><head><meta charset="utf-8">
+<script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
+</head><body>
+<button id="b">Включить таблицу</button>
+<pre id="o"></pre>
+<script>
+vkBridge.send('VKWebAppInit');
+document.getElementById('b').onclick = async () => {
+  const out = document.getElementById('o');
+  try {
+    const t = await vkBridge.send('VKWebAppGetCommunityToken',{app_id:54812484,group_id:92645165,scope:'app_widget'});
+    out.textContent = 'КЛЮЧ_НАЧАЛО: ' + t.access_token.slice(0,5) + '... (полный скопируй в дом, сюда не кидай)';
+    window._tok = t.access_token;
+    await vkBridge.send('VKWebAppShowCommunityWidgetPreviewBox',{type:'table',group_id:92645165,code:'return {"title":"ПОКАЗАНИЯ ДОМА • Ворошилова 29/3","head":[{"text":"Что"},{"text":"Значение"}],"body":[[{"text":"ТЕМПЕРАТУРА ГОРЯЧЕЙ ВОДЫ"},{"text":"— °С"}],[{"text":"НАПРЯЖЕНИЕ В СЕТИ"},{"text":"— В"}],[{"text":"СЛЫШИМОСТЬ НАСОСА"},{"text":"— %"}]]};'});
+    out.textContent += '\nТаблица встала. Дальше дом сам обновит цифры.';
+  } catch(e){ out.textContent = 'ОШИБКА: ' + JSON.stringify(e); }
+};
+</script></body></html>
